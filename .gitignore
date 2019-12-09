@@ -7,3 +7,8 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+
+
+.idea
+composer.lock
+symfony.lock
