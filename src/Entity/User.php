@@ -2,13 +2,20 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ApiResource(
+ *     attributes={
+ *     "pagination_enabled"=false
+ *     }
+ * )
  */
 class User implements UserInterface
 {
@@ -16,37 +23,43 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"invoices_read","customers_read","invoices_subresource"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups({"invoices_read","customers_read","invoices_subresource"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups({"invoices_read","customers_read","invoices_subresource"})
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Groups({"invoices_read","customers_read","invoices_subresource"})
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"invoices_read","customers_read","invoices_subresource"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"invoices_read","customers_read","invoices_subresource"})
      */
     private $lastName;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Customer", mappedBy="yes")
+     * @ORM\OneToMany(targetEntity="App\Entity\Customer", mappedBy="user")
      */
     private $customers;
 
@@ -169,7 +182,7 @@ class User implements UserInterface
     {
         if (!$this->customers->contains($customer)) {
             $this->customers[] = $customer;
-            $customer->setYes($this);
+            $customer->setUser($this);
         }
 
         return $this;
@@ -180,8 +193,8 @@ class User implements UserInterface
         if ($this->customers->contains($customer)) {
             $this->customers->removeElement($customer);
             // set the owning side to null (unless already changed)
-            if ($customer->getYes() === $this) {
-                $customer->setYes(null);
+            if ($customer->getUser() === $this) {
+                $customer->setUser(null);
             }
         }
 

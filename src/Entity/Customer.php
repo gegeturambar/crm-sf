@@ -2,12 +2,32 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
+ * @ApiResource(
+ *     attributes={
+ *     "pagination_items_per_page"=4
+ *     },
+ *     normalizationContext={
+ *      "groups"={"customers_read"}
+ *     },
+ *     collectionOperations={"GET"={"path"="/customers"},"POST"},
+ *     itemOperations={"GET"={"path"="/customer"},"PUT","DELETE"},
+ *     subresourceOperations={"invoices_get_subresource"={"path"="/customers/{id}/invoices"}}
+ * )
+ * @ApiFilter(
+ *     SearchFilter::class,
+ *     properties={"firstName","lastName","company"}
+ * )
  */
 class Customer
 {
@@ -15,36 +35,44 @@ class Customer
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"customers_read","invoices_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read","invoices_read"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read","invoices_read"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read","invoices_read"})
      */
     private $company;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read","invoices_read"})
      */
     private $email;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invoice", mappedBy="customer")
+     * @Groups({"customers_read"})
+     * @ApiSubresource()
      */
     private $invoices;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="customers")
+     * @Groups({"customers_read"})
      */
     private $user;
 
@@ -154,5 +182,29 @@ class Customer
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * retourne le total des invoices
+     * @return float
+     * @Groups({"customers_read"})
+     */
+    public function getTotalAmount(): float
+    {
+        return array_reduce($this->invoices->toArray(),function ($total,Invoice $invoice){
+           return $total + $invoice->getAmount();
+        },0);
+    }
+
+    /**
+     * retourne le total des invoices non payés
+     * @return float
+     * @Groups({"customers_read"})
+     */
+    public function getUnpaidAmount(): float
+    {
+        return array_reduce($this->invoices->toArray(),function ($total,Invoice $invoice){
+            return $total +  in_array($invoice->getStatus() ,array('PAID','CANCELLED')) ? 0 : $invoice->getAmount();
+        },0);
     }
 }
