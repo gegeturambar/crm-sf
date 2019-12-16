@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
  * @ApiResource(
@@ -54,18 +56,24 @@ class Invoice
     /**
      * @ORM\Column(type="float")
      * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     * @Assert\NotBlank(message="Le montant de la facture est obligatoire")
+     * @Assert\Type(type="numeric",message="le montant de la facture doit être un numérique")
      */
     private $amount;
 
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     * @Assert\NotBlank(message="la date d'envoi doit être renseigné")
+     * @Assert\DateTime(message="la date doit être au format YYYY-MM-DD")
      */
     private $sentAt;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     * @Assert\NotBlank(message="le statut de la facture est obligatoire")
+     * @Assert\Choice(choices={"SENT","PAID","CANCELLED"}, message="le statut doit être soit SENT, soit PAID, soit CANCELLED")
      */
     private $status;
 
@@ -73,6 +81,7 @@ class Invoice
      * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="invoices")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"invoices_read"})
+     * @Assert\NotBlank(message="Il faut un customer")
      */
     private $customer;
 
@@ -88,6 +97,8 @@ class Invoice
     /**
      * @ORM\Column(type="integer")
      * @Groups({"invoices_read","customers_read"})
+     * @Assert\NotBlank(message="il faut un chrono pour la facture")
+     * @Assert\Type(message="Le chrono doit être un chiffre",type="integer")
      */
     private $chrono;
 

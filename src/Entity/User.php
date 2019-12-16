@@ -6,11 +6,14 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity("email")
  * @ApiResource(
  *     attributes={
  *     "pagination_enabled"=false
@@ -30,6 +33,10 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     * @Assert\NotBlank(
+     *     message="Vous devez saisir votre email"
+     * )
+     *
      */
     private $email;
 
@@ -49,12 +56,19 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     * @Assert\NotBlank(
+     *     message="Vous devez saisir votre nom"
+     * )
+     *
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     * @Assert\NotBlank(
+     *     message="Vous devez saisir votre prénom"
+     * )
      */
     private $lastName;
 

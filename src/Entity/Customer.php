@@ -11,6 +11,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
  * @ApiResource(
@@ -21,7 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      "groups"={"customers_read"}
  *     },
  *     collectionOperations={"GET"={"path"="/customers"},"POST"},
- *     itemOperations={"GET"={"path"="/customer"},"PUT","DELETE"},
+ *     itemOperations={"GET","PUT","DELETE"},
  *     subresourceOperations={"invoices_get_subresource"={"path"="/customers/{id}/invoices"}}
  * )
  * @ApiFilter(
@@ -42,24 +44,37 @@ class Customer
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read","invoices_read"})
+     * @Assert\NotBlank(
+     *     message="Vous devez saisir votre nom"
+     * )
+     * @Assert\Length(min=3,minMessage="Le prénom doit faire entre 3 et 255 caractères", max=255,maxMessage="Le prénom doit faire entre 3 et 255 caractères")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read","invoices_read"})
+     * @Assert\NotBlank(
+     *     message="Vous devez saisir votre prenom"
+     * )
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read","invoices_read"})
+     * @Assert\NotBlank(
+     *     message="Vous devez saisir votre compagnie"
+     * )
      */
     private $company;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read","invoices_read"})
+     * @Assert\NotBlank(
+     *     message="Vous devez saisir votre email"
+     * )
      */
     private $email;
 
