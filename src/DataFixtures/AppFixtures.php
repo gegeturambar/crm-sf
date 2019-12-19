@@ -27,12 +27,20 @@ class AppFixtures extends Fixture
 
 
 
+        $user = new User();
+        $user->setEmail('gegeturambar@gmail.com')
+            ->setLastName('gege')
+            ->setFirstName('turambar')
+            ->setPassword($this->encoder->encodePassword($user, 'password'));
+
+        $manager->persist($user);
+
         for($u = 0;$u<10; $u++){
             $user = new User();
             $user->setEmail($faker->email)
                 ->setLastName($faker->lastName)
                 ->setFirstName($faker->firstName)
-                ->setPassword($faker->password);
+                ->setPassword($this->encoder->encodePassword($user, 'password'));
 
             $chrono = 1;
 
@@ -41,7 +49,7 @@ class AppFixtures extends Fixture
                 $customer->setFirstName($faker->firstName())
                     ->setLastName($faker->lastName)
                     ->setCompany($faker->company)
-                    ->setEmail( $this->encoder->encodePassword($user, $faker->email));
+                    ->setEmail(  $faker->email);
 
                 $manager->persist($customer);
 

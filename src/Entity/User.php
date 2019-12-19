@@ -26,13 +26,13 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     * @Groups({"invoices_read","customers_read","invoices_subresource","users_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     * @Groups({"invoices_read","customers_read","invoices_subresource", "users_read"})
      * @Assert\NotBlank(
      *     message="Vous devez saisir votre email"
      * )
@@ -42,7 +42,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     * @Groups({"invoices_read","customers_read","invoices_subresource", "users_read"})
      */
     private $roles = [];
 
@@ -55,7 +55,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     * @Groups({"invoices_read","customers_read","invoices_subresource", "users_read"})
      * @Assert\NotBlank(
      *     message="Vous devez saisir votre nom"
      * )
@@ -65,7 +65,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"invoices_read","customers_read","invoices_subresource"})
+     * @Groups({"invoices_read","customers_read","invoices_subresource", "users_read"})
      * @Assert\NotBlank(
      *     message="Vous devez saisir votre prénom"
      * )
