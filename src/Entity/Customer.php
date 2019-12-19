@@ -87,6 +87,7 @@ class Customer
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="customers")
+     * @Assert\NotNull(message="Il faut renseigner un utilisateur")
      * @Groups({"customers_read"})
      */
     private $user;
